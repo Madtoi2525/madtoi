@@ -1,0 +1,109 @@
+Router R1
+hostname R1
+interface Loopback 0
+ip address 192.168.1.1 255.255.255.0
+interface Serial2/0
+ip address 209.165.201.2 255.255.255.252
+clock rate 128000
+bandwidth 128
+no shutdown
+interface Serial6/0
+ip address 209.165.202.130 255.255.255.252
+bandwidth 128
+no shutdown
+
+Router ISP1 (R2)
+
+hostname ISP1
+interface Loopback0
+ip address 209.165.200.254 255.255.255.255
+interface Loopback1
+ip address 209.165.201.30 255.255.255.255
+interface Serial2/0
+ip address 209.165.201.1 255.255.255.252
+bandwidth 128
+no shutdown
+interface Serial3/0
+ip address 209.165.200.225 255.255.255.252
+clock rate 128000
+bandwidth 128
+no shutdown
+
+Router ISP2 (R3)
+
+hostname ISP2
+interface Loopback0
+ip address 209.165.200.254 255.255.255.255
+interface Loopback1
+ip address 209.165.202.158 255.255.255.255
+interface Serial6/0
+ip address 209.165.202.129 255.255.255.252
+clock rate 128000
+bandwidth 128
+no shutdown
+interface Serial3/0
+ip address 209.165.200.226 255.255.255.252
+bandwidth 128
+no shutdown
+
+R1# 
+show interfaces description | include up
+
+R1(config)#
+ip route 0.0.0.0 0.0.0.0 209.165.201.1
+ 
+ISP1(config)#
+router eigrp 1
+network 209.165.200.224 0.0.0.3
+network 209.165.201.0 0.0.0.3
+no auto-summary
+exit
+ip route 192.168.1.0 255.255.255.0 209.165.201.2
+
+ISP2(config)# 
+router eigrp 1
+network 209.165.200.224 0.0.0.3
+network 209.165.202.128 0.0.0.3
+no auto-summary
+exit
+ip route 192.168.1.0 255.255.255.0 209.165.202.130
+
+#R1
+tclsh
+foreach address {
+209.165.200.254
+209.165.201.30
+209.165.202.158
+} {
+ping $address source 192.168.1.1
+}
+
+foreach address {
+209.165.200.254
+209.165.201.30
+209.165.202.158
+} {
+trace $address source 192.168.1.1
+}
+
+R1(config)# 
+ip sla 11
+icmp-echo 209.165.201.30
+frequency 10
+exit
+ip sla schedule 11 life forever start-time now
+
+show ip sla configuration 11
+
+show ip sla statistics 
+
+R1(config)# 
+ip sla 22
+icmp-echo 209.165.202.158
+frequency 10
+exit
+ip sla schedule 22 life forever start-time now
+end
+
+show ip sla configuration 22
+show ip sla statistics 22                                      
