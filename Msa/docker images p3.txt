@@ -1,0 +1,18 @@
+docker version
+docker run rocker/verse
+docker images
+###### Create repository in hub
+docker login
+docker tag 12hs982398hdw anonymous/repo1:firsttry
+docker images
+docker push anonymous/repo1:firsttry
+
+cat > Dockerfile<<EOF
+From busybox
+CMD echo "Hello.ieuen"
+EOF
+
+docker build -t anonymous/repo2
+docker images
+docker push anonymous/repo2
+docker run anonymous/repo2

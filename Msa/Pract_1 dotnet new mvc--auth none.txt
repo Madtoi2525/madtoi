@@ -1,0 +1,69 @@
+dotnet new mvc --auth none
+
+#####HomeControllers.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Practical.Models;
+
+namespace Practical.Controllers
+{
+    public class HomeController : Controller
+    {
+	public String Index()
+	{return "Hello World";}
+    }
+}
+
+dotnet run
+
+#####Models #Create new file #StackQuote.cs#
+using System;
+namespace Practical.Models
+{
+	public class StockQuote
+	{
+		public string Symbol
+		{ get; set; }
+		public int Price
+		{ get; set; }
+	}
+}
+
+#### views/home/modify 'index.cshtml' file #####
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    Symbol:@Model.Symbol<br/>
+    Price:@Model.Price<br/>
+</div>
+
+##### HomeControllers.cs ######
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Practical.Models;
+
+namespace Practical.Controllers
+{
+    public class HomeController : Controller
+    {
+        public async Task<IActionResult> index()
+        {
+            var model = new StockQuote {Symbol ="HelloWorld!", Price=200};
+            return View(model);
+        }
+    }
+}
+
+dotnet run
