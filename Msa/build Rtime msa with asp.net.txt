@@ -1,5 +1,0 @@
-cd  space (path)
-dotnet new console -o MSCIT
-open mscit file edit 
-path >cd MSCIT
-dotnet run
